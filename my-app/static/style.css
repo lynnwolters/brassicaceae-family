@@ -1,0 +1,26 @@
+:root {
+    --color-1: #FFFFFF;
+    --color-2: #D7E9FB;
+    --color-3: #003C83;
+    --color-4: #0075FF;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    background: linear-gradient(var(--color-1) 0%, var(--color-2));
+}
+
+a, button {
+    cursor: pointer;
+}
