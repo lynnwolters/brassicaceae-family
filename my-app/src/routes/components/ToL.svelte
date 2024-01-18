@@ -8,6 +8,22 @@
     let svg;
     let jsonData;
     let selectedNode = null;
+    let searchText = "";
+
+    const handleSearch = () => {
+        const filteredData = jsonData.filter(item =>
+            item.SPECIES_NAME_PRINT.toLowerCase().includes(searchText.toLowerCase())
+        );
+        const parsedData = parseData(newickData, filteredData);
+        updateTree(parsedData);
+    };
+
+    const updateTree = (data) => {
+        d3.select("#tree-of-life svg").remove();
+        const container = document.querySelector("#tree-of-life");
+        svg = createTreeOfLife(data);
+        container.appendChild(svg);
+    };
 
     const showPopup = (d) => {
         selectedNode = d;
@@ -102,31 +118,47 @@
                     }`
             )
             .attr("text-anchor", (d) => (d.x < 180 ? "start" : "end"))
+            .attr("fill", "#6B93C2")
             .text((d) => (d.data.speciesName ? d.data.speciesName.replace(/_/g, " ") : ""))
             .attr("font-family", "sans-serif")
             .attr("font-size", 10)
             .on("click", (event, d) => {
                 showPopup(d);
             })
-            .on("mouseover", mouseovered(true))
-            .on("mouseout", mouseovered(false))
+            .on("mouseover", function (event, d) {
+                d3.select(this)
+                    .attr("fill", "#0075FF")
+                    .classed("label--active", true); 
+                mouseovered(true)(event, d);
+                d3.select(d.linkNode).classed("link--active", true).raise();
+                d3.select(d.linkExtensionNode).classed("link-extension--active", true).raise();
+            })
+            .on("mouseout", function (event, d) {
+                d3.select(this)
+                    .attr("fill", "#6B93C2")
+                    .classed("label--active", false); 
+                mouseovered(false)(event, d);
+                d3.select(d.linkNode).classed("link--active", false).raise();
+                d3.select(d.linkExtensionNode).classed("link-extension--active", false).raise();
+            })
             .append("style").text(`
                 .link--active {
-                    stroke: #000 !important;
-                    stroke-width: 1.5px;
+                    stroke: #0075FF !important;
+                    stroke-width: .2em;
                 }
                 .link-extension--active {
-                    stroke-opacity: .6;
+                    stroke-opacity: 1;
                 }
                 .label--active {
                     font-weight: bold;
+                    color: #0075FF;
                 }
             `);
 
         const linkExtension = svg
             .append("g")
             .attr("fill", "none")
-            .attr("stroke", "#000")
+            .attr("stroke", "#003C83")
             .attr("stroke-opacity", 0.25)
             .selectAll("path")
             .data(root.links().filter((d) => !d.target.children))
@@ -139,7 +171,7 @@
         const link = svg
             .append("g")
             .attr("fill", "none")
-            .attr("stroke", "#808080")
+            .attr("stroke", "#6B93C2")
             .selectAll("path")
             .data(root.links())
             .join("path")
@@ -273,7 +305,7 @@
         </li>
         <li>
             <form>
-                <input type="text" placeholder="Search...">
+                <input bind:value={searchText} type="text" placeholder="Search..." on:input={handleSearch}>
                 <button>
                     <div>
                         <img src="images/search.svg" alt="search">
