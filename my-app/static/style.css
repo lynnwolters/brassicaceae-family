@@ -1,8 +1,11 @@
 :root {
     --color-1: #FFFFFF;
-    --color-2: #D7E9FB;
+    --color-2: #F0F7FF;
     --color-3: #003C83;
     --color-4: #0075FF;
+    --color-5: #00CA5D;
+    --color-6: #FF7A00;
+    --color-7: #DE0000;
 }
 
 * {
@@ -18,6 +21,8 @@
 }
 
 body {
+    overflow-y: hidden;
+
     background: linear-gradient(var(--color-1) 0%, var(--color-2));
 
     font-family: 'Arimo', sans-serif;
