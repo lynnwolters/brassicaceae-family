@@ -279,6 +279,7 @@
                         <img src="images/search.svg" alt="search">
                     </div>
                 </button>
+                <div></div>
             </form>
         </li>
     </ul>
@@ -411,6 +412,10 @@
         height: 8em;
 
         position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
         z-index: 2;
 
         display: flex;
@@ -418,11 +423,13 @@
 
         padding: 1em 1em 0 1em;
 
-        background-color: transparent;
+        pointer-events: none;
     }
 
     .header-left {
         height: 5em;
+
+        pointer-events: all;
     }
 
     .header-left li {
@@ -545,6 +552,8 @@
         height: 2.5em;
 
         display: flex;
+
+        pointer-events: all;
     }
 
     .header-right li {
@@ -612,11 +621,11 @@
     main > section {
         aspect-ratio: 1/1;
         height: 100%;
-
-        z-index: 1;
     }
 
     #tree-of-life {
+        z-index: 1;
+
         cursor: pointer;
     }
 
@@ -631,7 +640,7 @@
         position: fixed;
         top: 0;
         left: 0;
-        z-index: 3;
+        z-index: 1000;
 
         display: flex;
         justify-content: center;
@@ -856,9 +865,8 @@
         height: 8em;
 
         position: fixed;
-        z-index: 2;
-        right: 0;
         bottom: 0;
+        right: 0;
 
         display: flex;
         justify-content: end;
