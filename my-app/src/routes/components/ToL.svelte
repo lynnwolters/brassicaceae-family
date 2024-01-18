@@ -54,7 +54,24 @@
     <section></section>
 </main>
 
-<footer></footer>
+<footer>
+    <ul class="footer-right">
+        <li>
+            <button>
+                <div>
+                    <img src="images/zoom-in.svg" alt="zoom-in">
+                </div>
+            </button>
+        </li>
+        <li>
+            <button>
+                <div>
+                    <img src="images/zoom-out.svg" alt="zoom-out">
+                </div>
+            </button>
+        </li>
+    </ul>
+</footer>
 
 <style>
     /* ******* */
@@ -69,7 +86,7 @@
 
         padding: 1em 1em 0 1em;
 
-        background-color: lightgray;
+        background-color: transparent;
     }
 
     .header-left {
@@ -252,7 +269,7 @@
     /* *** */
 
     main > section {
-        height: calc(100vh - 14em);
+        height: calc(100vh - 16em);
     }
 
     /* ******** */
@@ -260,8 +277,57 @@
     /* ******* */
 
     footer {
-        height: 6em;
+        height: 8em;
 
-        background-color: lightgray;
+        display: flex;
+        justify-content: end;
+        align-items: center;
+
+        padding: 0 1em 1em 1em;
+
+        background-color: transparent;
+    }
+
+    .footer-right {
+        height: 5em;
+
+        list-style: none;
+    }
+
+    .footer-right li {
+        height: 2.5em;
+    }
+
+    .footer-right li button {
+        height: 100%;
+
+        padding: 0 1.5em;
+
+        border: none;
+        border-radius: 6em;
+
+        background-color: var(--color-3);
+        color: var(--color-1)
+    }
+
+    .footer-right li button div {
+        width: fit-content;
+        height: 100%;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .footer-right li button div img {
+        width: 50%;
+    }
+
+    .footer-right li:nth-of-type(1) {
+        margin-bottom: 1em;
+    }
+
+    .footer-right li button:hover {
+        background-color: var(--color-4);
     }
 </style>
