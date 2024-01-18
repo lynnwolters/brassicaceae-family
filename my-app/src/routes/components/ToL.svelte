@@ -1,5 +1,5 @@
 <header>
-    <ul>
+    <ul class="header-left">
         <li>
             <a href="#">
                 <div>
@@ -26,7 +26,7 @@
             </form>
         </li>
     </ul>
-    <ul>
+    <ul class="header-right">
         <li>
             <button>
                 <div>
@@ -57,94 +57,167 @@
 <footer></footer>
 
 <style>
+    /* ******* */
+    /* HEADER */
+    /* ****** */
+
     header {
-        height: 6em;
+        height: 8em;
 
         display: flex;
-        align-items: center;
         justify-content: space-between;
+
+        padding: 1em 1em 0 1em;
 
         background-color: lightgray;
     }
 
-    header > ul:nth-of-type(1) li:nth-of-type(1) a {
-        width: fit-content;
-        height: 3em;
+    .header-left {
+        height: 5em;
+    }
+
+    .header-left li {
+        list-style: none;
+    }
+
+    .header-left li:nth-of-type(1) a {
+        height: 2.5em;
 
         display: flex;
+        align-items: center;
 
+        margin-bottom: 1em;
+
+        color: var(--color-1);
         text-decoration: none;
     }
 
-    header > ul:nth-of-type(1) li:nth-of-type(1) a > div:nth-of-type(1) {
+    .header-left li:nth-of-type(1) a > div {
+        height: 100%;
+
+        padding: 0 1em;
+    }
+
+    .header-left li:nth-of-type(1) a > div:nth-of-type(1) {
         display: flex;
         align-items: center;
 
         border-radius: 6em 0 0 6em;
 
         background-color: var(--color-4);
-
-        color: var(--color-1)
     }
 
-    header > ul:nth-of-type(1) li:nth-of-type(1) a > div:nth-of-type(1) > div:nth-of-type(1) {
+    .header-left li:nth-of-type(1) a > div:nth-of-type(1) div:nth-of-type(1) {
         width: fit-content;
         height: 100%;
 
         display: flex;
         justify-content: start;
         align-items: center;
-
-        padding: 0 1em;
     }
 
-    header > ul:nth-of-type(1) li:nth-of-type(1) a > div:nth-of-type(1) > div:nth-of-type(1) img {
+    .header-left li:nth-of-type(1) a > div:nth-of-type(1) div:nth-of-type(1) img {
         width: 50%;
     }
 
-    header > ul:nth-of-type(1) li:nth-of-type(1) a > div:nth-of-type(2) {
-        display: flex;
-        align-items: center;
+    .header-left li:nth-of-type(1) a > div:nth-of-type(1) div:nth-of-type(2) p {
+        font-weight: bold;
+    }
 
-        padding: 0 1em;
+    .header-left li:nth-of-type(1) a > div:nth-of-type(2) {
+        display: flex;
+        justify-content: end;
+        align-items: center;
 
         border-radius: 0 6em 6em 0;
 
         background-color: var(--color-3);
-
-        color: var(--color-1)
     }
 
-    header > ul:nth-of-type(2) {
-        display: flex;
-    }
-
-    header > ul:nth-of-type(2) li {
-        list-style: none;
-    }
-
-    header > ul:nth-of-type(2) li button {
-        width: fit-content;
-        height: 3em;
-
-        padding: 0 1em;
+    .header-left li:nth-of-type(2) form {
+        height: 2.5em;
 
         display: flex;
         align-items: center;
+    }
+
+    .header-left li:nth-of-type(2) form input {
+        width: 100%;
+        height: 100%;
+
+        padding: 0 1em;
+
+        border: solid .1em var(--color-3);
+        border-radius: 6em 0 0 6em;
+
+        background-color: var(--color-1);
+
+        color: var(--color-3)
+    }
+
+    .header-left li:nth-of-type(2) form input::placeholder {
+        color: var(--color-3)
+    }
+
+    .header-left li:nth-of-type(2) form input:focus {
+        outline: none;
+    }
+
+    .header-left li:nth-of-type(2) form button {
+        aspect-ratio: 1/1;
+        height: 100%;
+
+        display: flex;
+        justify-content: center;
+
+        border: none;
+        border-radius: 0 6em 6em 0;
+
+        background-color: var(--color-3);
+    }
+
+    .header-left li:nth-of-type(2) form button div {
+        height: 100%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .header-left li:nth-of-type(2) form button div img {
+        width: 50%;
+    }
+
+    .header-left li:nth-of-type(2) form button:hover {
+        background-color: var(--color-4);
+    }
+
+    .header-right {
+        height: 2.5em;
+
+        display: flex;
+    }
+
+    .header-right li {
+        list-style: none;
+    }
+
+    .header-right li button {
+        height: 100%;
+
+        display: flex;
+        align-items: center;
+
+        padding: 0 1em;
 
         border: none;
         border-radius: 6em;
 
         background-color: var(--color-3);
-
         color: var(--color-1)
     }
 
-    header > ul:nth-of-type(2) li:nth-of-type(1) button {
-        margin-right: 1em;
-    }
-
-    header > ul:nth-of-type(2) li button div:nth-of-type(1) {
+    .header-right li button div:nth-of-type(1) {
         width: fit-content;
         height: 100%;
 
@@ -153,11 +226,11 @@
         align-items: center;
     }
 
-    header > ul:nth-of-type(2) li button div:nth-of-type(1) img {
+    .header-right li button div:nth-of-type(1) img {
         width: 50%;
     }
 
-    header > ul:nth-of-type(2) li button div:nth-of-type(2) {
+    .header-right li button div:nth-of-type(2) {
         width: fit-content;
         height: 100%;
 
@@ -166,13 +239,25 @@
         align-items: center;
     }
 
-    header > ul:nth-of-type(2) li button:hover {
+    .header-right li:nth-of-type(1) button:nth-of-type(1) {
+        margin-right: 1em;
+    }
+
+    .header-right li button:hover {
         background-color: var(--color-4);
     }
 
+    /* **** */
+    /* TOL */
+    /* *** */
+
     main > section {
-        height: calc(100vh - 12em);
+        height: calc(100vh - 14em);
     }
+
+    /* ******** */
+    /* FOOTER */
+    /* ******* */
 
     footer {
         height: 6em;
