@@ -106,15 +106,13 @@
         filteredSpeciesData = jsonData.filter((item) =>
             item.SPECIES_NAME_PRINT.toLowerCase().startsWith(searchSpecies.toLowerCase())
         );
-        const parsedData = parseData(newickData, filteredSpeciesData);
-        updateSearchFilter(parsedData);
+        updateLabels();
         updateSuggestions();
     };
-    const updateSearchFilter = (data) => {
-        d3.select("#tree-of-life svg").remove();
-        const container = document.getElementById("tree-of-life");
-        const svg = createTreeOfLife(data);
-        container.appendChild(svg);
+    const updateLabels = () => {
+        d3.selectAll(".label")
+            .attr("fill", (d) => d.data.speciesName.toLowerCase().startsWith(searchSpecies.toLowerCase()) ? "#0075FF" : "#6B93C2")
+            .attr("font-weight", (d) => d.data.speciesName.toLowerCase().startsWith(searchSpecies.toLowerCase()) ? "bold" : "normal");
     };
     const updateSuggestions = () => {
         const datalist = document.getElementById("species-list");
@@ -161,20 +159,16 @@
 
         const svg = d3
             .create("svg")
-            .attr("viewBox", [-svgOuterRadius, -svgOuterRadius, svgWidth, svgWidth]);
+            .attr("viewBox", [-svgOuterRadius, -svgOuterRadius, svgWidth, svgWidth])
+            .attr("transform", "rotate(90)"); 
 
         svg.append("g")
             .selectAll("text")
             .data(root.leaves())
             .join("text")
+            .attr("class", "label") 
             .attr("dy", ".31em")
-            .attr(
-                "transform",
-                (d) =>
-                    `rotate(${d.x - 90}) translate(${svgInnerRadius + 4},0)${
-                        d.x < 180 ? "" : " rotate(180)"
-                    }`
-            )
+            .attr("transform", (d) => `rotate(${d.x - 90}) translate(${svgInnerRadius + 4},0)${d.x < 180 ? "" : " rotate(180)"}`)
             .attr("text-anchor", (d) => (d.x < 180 ? "start" : "end"))
             .attr("fill", "#6B93C2")
             .text((d) => (d.data.speciesName ? d.data.speciesName.replace(/_/g, " ") : ""))
@@ -185,8 +179,8 @@
             })
             .on("mouseover", function (event, d) {
                 d3.select(this)
-                    .attr("fill", "#0075FF")
-                    .classed("label--active", true); 
+                    .attr("fill", d.data.speciesName.toLowerCase().startsWith(searchSpecies.toLowerCase()) ? "#0075FF" : "#6B93C2")
+                    .classed("label--active", true);
                 mouseovered(true)(event, d);
                 d3.select(d.linkNode).classed("link--active", true).raise();
                 d3.select(d.linkExtensionNode).classed("link-extension--active", true).raise();
@@ -194,7 +188,7 @@
             .on("mouseout", function (event, d) {
                 d3.select(this)
                     .attr("fill", "#6B93C2")
-                    .classed("label--active", false); 
+                    .classed("label--active", false);
                 mouseovered(false)(event, d);
                 d3.select(d.linkNode).classed("link--active", false).raise();
                 d3.select(d.linkExtensionNode).classed("link-extension--active", false).raise();
@@ -202,7 +196,7 @@
             .append("style").text(`
                 .link--active {
                     stroke: #0075FF !important;
-                    stroke-width: .2em;
+                    stroke-width: .15em;
                 }
                 .link-extension--active {
                     stroke-opacity: 1;
@@ -223,6 +217,7 @@
             .join("path")
             .each(function (d) {
                 d.target.linkExtensionNode = this;
+                d3.select(this).attr("data-source", d.source.data.id).attr("data-target", d.target.data.id);
             })
             .attr("d", linkExtensionConstant);
 
@@ -235,6 +230,7 @@
             .join("path")
             .each(function (d) {
                 d.target.linkNode = this;
+                d3.select(this).attr("data-source", d.source.data.id).attr("data-target", d.target.data.id);
             })
             .attr("d", linkVariable)
             .attr("stroke", (d) => d.target.color);
@@ -353,11 +349,11 @@
                         <img src="images/tree.svg" alt="tree">
                     </div>
                     <div>
-                        <p>Tree Of Life</p>
+                        <p>Brassicaceae</p>
                     </div>
                 </div>
                 <div>
-                    <p>Brassicaceae</p>
+                    <p>Tree of Life</p>
                 </div>
             </a>
         </li>
