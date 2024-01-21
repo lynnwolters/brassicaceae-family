@@ -111,8 +111,29 @@
     };
     const updateLabels = () => {
         d3.selectAll(".label")
-            .attr("fill", (d) => d.data.speciesName.toLowerCase().startsWith(searchSpecies.toLowerCase()) ? "#0075FF" : "#6B93C2")
-            .attr("font-weight", (d) => d.data.speciesName.toLowerCase().startsWith(searchSpecies.toLowerCase()) ? "bold" : "normal");
+            .attr("fill", (d) => {
+                const isMatch = searchSpecies.trim() !== "" && d.data.speciesName.toLowerCase().startsWith(searchSpecies.toLowerCase());
+                const color = isMatch ? "#0075FF" : "#6B93C2";
+                d3.select(d.linkNode)
+                    .attr("stroke", color)
+                    .attr("stroke-width", isMatch ? ".15em" : "1"); 
+                d3.select(d.linkExtensionNode)
+                    .attr("stroke", color)
+                    .attr("stroke-width", isMatch ? ".15em" : "1"); 
+                return color;
+            })
+            .attr("font-weight", (d) => {
+                const isMatch = searchSpecies.trim() !== "" && d.data.speciesName.toLowerCase().startsWith(searchSpecies.toLowerCase());
+                return isMatch ? "bold" : "normal";
+            })
+            .classed("label--active", (d) => {
+                const isMatch = searchSpecies.trim() !== "" && d.data.speciesName.toLowerCase().startsWith(searchSpecies.toLowerCase());
+                return isMatch;
+            })
+            .classed("label--inactive", (d) => {
+                const isMatch = searchSpecies.trim() !== "" && d.data.speciesName.toLowerCase().startsWith(searchSpecies.toLowerCase());
+                return !isMatch;
+            });
     };
     const updateSuggestions = () => {
         const datalist = document.getElementById("species-list");
@@ -160,7 +181,6 @@
         const svg = d3
             .create("svg")
             .attr("viewBox", [-svgOuterRadius, -svgOuterRadius, svgWidth, svgWidth])
-            .attr("transform", "rotate(90)"); 
 
         svg.append("g")
             .selectAll("text")
@@ -178,8 +198,9 @@
                 showPopup(d);
             })
             .on("mouseover", function (event, d) {
+                const hoverColor = "#0075FF"; 
                 d3.select(this)
-                    .attr("fill", d.data.speciesName.toLowerCase().startsWith(searchSpecies.toLowerCase()) ? "#0075FF" : "#6B93C2")
+                    .attr("fill", hoverColor)
                     .classed("label--active", true);
                 mouseovered(true)(event, d);
                 d3.select(d.linkNode).classed("link--active", true).raise();
@@ -210,7 +231,7 @@
         const linkExtension = svg
             .append("g")
             .attr("fill", "none")
-            .attr("stroke", "#003C83")
+            .attr("stroke", "#6B93C2")
             .attr("stroke-opacity", 0.25)
             .selectAll("path")
             .data(root.links().filter((d) => !d.target.children))
@@ -712,6 +733,8 @@
     #tree-of-life {
         z-index: 1;
 
+        transform: rotate(90deg);
+
         cursor: pointer;
     }
 
@@ -1004,5 +1027,16 @@
 
     .footer-right li button:hover {
         background-color: var(--color-4);
+    }
+
+    /* ****** */
+    /* OTHER */
+    /* **** */
+
+    .label--inactive {
+        fill: #6B93C2;
+        font-weight: normal;
+        stroke: #6B93C2;
+        stroke-width: 1;
     }
 </style>
