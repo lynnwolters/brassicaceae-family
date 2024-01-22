@@ -23,8 +23,8 @@
 body {
     overflow-y: hidden;
 
-    background: linear-gradient(var(--color-1) 0%, var(--color-2));
-
+    background-color: var(--color-2);
+    
     font-family: 'Arimo', sans-serif;
     font-size: 1em;
     font-weight: 400;
