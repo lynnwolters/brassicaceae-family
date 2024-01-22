@@ -675,12 +675,9 @@
     }
 
     .nav-search-filter > ul {
-        height: fit-content;
-
-        overflow-y: scroll;
-
+        max-height: 12em;
+        overflow-y: hidden;
         margin-top: 1em;
-
         border-radius: .4em;
 
         &::-webkit-scrollbar {
@@ -690,14 +687,17 @@
         &::-webkit-scrollbar-thumb {
             border: solid .1em var(--color-4);
             border-radius: 6em;
-
             background-color: var(--color-1); 
         }
 
         &::-webkit-scrollbar-track {
             border-radius: 6em;
-            
             background-color: var(--color-4); 
+        }
+
+        &:not(:empty) {
+            overflow-y: auto;
+            max-height: 12em;
         }
     }
 
