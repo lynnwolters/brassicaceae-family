@@ -92,15 +92,21 @@
     // ACTIVE STATE (SVELTE / D3) //
     // ************************* //
 
-    function activeState(active) {
-        return function (event, d) {
-            d3.select(this)
-                .classed("label-active", active);
-            do d3.select(d.linkNode)
-                .classed("link-active", active)
-                .raise();
-            while ((d = d.parent));
-        };
+    function activeState(activeResult) {
+        d3.selectAll(".label-active")
+            .classed("label-active", false);
+        d3.selectAll(".link-active")
+            .classed("link-active", false);
+        const activeSpeciesName = activeResult.SPECIES_NAME_PRINT;
+        d3.selectAll("text")
+            .filter((d) => d.data.speciesName === activeSpeciesName)
+            .classed("label-active", true)
+            .each((d) => {
+                do d3.select(d.linkNode)
+                    .classed("link-active", true)
+                    .raise();
+                while ((d = d.parent));
+            });
     }
 
     // ********************************** //
@@ -131,8 +137,6 @@
         } else {
             searchResults = jsonData.filter(item => item.SPECIES_NAME_PRINT.toLowerCase().startsWith(query.toLowerCase()));
         }
-    };
-    const handleListItemClick = (result) => {
     };
 
     // ********************************** //
@@ -170,8 +174,8 @@
             .attr("font-family", "sans-serif")
             .attr("font-size", 8)
             .attr("fill", "#003C83")
-            .on("mouseover", activeState(true))
-            .on("mouseout", activeState(false))
+            .on("mouseover", mouseover(true))
+            .on("mouseout", mouseover(false))
             .on("click", (event, d) => {
                 showPopup(d)
             })
@@ -185,6 +189,17 @@
                     font-weight: bold;
                 }
             `);
+
+        function mouseover(active) {
+            return function (event, d) {
+                d3.select(this)
+                    .classed("label-active", active);
+                do d3.select(d.linkNode)
+                    .classed("link-active", active)
+                    .raise();
+                while ((d = d.parent));
+            };
+        }
 
         const linkExtension = svg
             .append("g")
@@ -320,7 +335,7 @@
         </div>
         <ul>
             {#each searchResults as result (result.SAMPLE)}
-                <li on:click={() => handleListItemClick(result)}>
+                <li on:click={() => activeState(result)}>
                     {result.SPECIES_NAME_PRINT}
                 </li>
             {/each}
