@@ -337,6 +337,9 @@
             {#each searchResults as result (result.SAMPLE)}
                 <li on:click={() => activeState(result)}>
                     {result.SPECIES_NAME_PRINT}
+                    <div>
+                        <img src="images/checkbox.svg" alt="checkbox">
+                    </div>
                 </li>
             {/each}
         </ul>
@@ -716,6 +719,7 @@
         height: 2.5em;
 
         display: flex;
+        justify-content: space-between;
         align-items: center;
 
         margin-right: .6em;
@@ -729,8 +733,25 @@
         cursor: pointer;
     }
 
+    .nav-search-filter > ul li div {
+        aspect-ratio: 1/1;
+        height: 50%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        border: solid .08em var(--color-3);
+        border-radius: .4em;
+    }
+
+    .nav-search-filter > ul li img {
+        width: 50%;
+    }
+
     .nav-search-filter > ul li:hover {
-        background-color: var(--color-3);
+        border: solid.08em var(--color-3);
+        border-radius: 6em;
 
         color: var(--color-1);
     }
