@@ -92,29 +92,14 @@
     // ACTIVE STATE (SVELTE / D3) //
     // ************************* //
 
-    function applyActiveState(active) {
+    function activeState(active) {
         return function (event, d) {
-            do {
-                d3.select(d.linkNode)
-                    .classed("link-active", active)
-                    .raise();
-                d3.select(this)
-                    .classed("text-active", active)
-                    .raise();
-            } while ((d = d.parent));
-            d3.select("style.active-styles").remove();
-            d3.select("svg").append("style")
-                .attr("class", "active-styles")
-                .text(`
-                    .link-active {
-                        stroke: ${active ? "#0075FF" : "none"};
-                        stroke-width: ${active ? ".15em" : "0"};
-                    }
-                    .text-active {
-                        fill: ${active ? "#0075FF" : "inherit"};
-                        font-weight: ${active ? "bold" : "normal"};
-                    }
-                `);
+            d3.select(this)
+                .classed("label-active", active);
+            do d3.select(d.linkNode)
+                .classed("link-active", active)
+                .raise();
+            while ((d = d.parent));
         };
     }
 
@@ -146,6 +131,8 @@
         } else {
             searchResults = jsonData.filter(item => item.SPECIES_NAME_PRINT.toLowerCase().startsWith(query.toLowerCase()));
         }
+    };
+    const handleListItemClick = (result) => {
     };
 
     // ********************************** //
@@ -183,11 +170,21 @@
             .attr("font-family", "sans-serif")
             .attr("font-size", 8)
             .attr("fill", "#003C83")
-            .on("mouseover", applyActiveState(true))
-            .on("mouseout", applyActiveState(false))
+            .on("mouseover", activeState(true))
+            .on("mouseout", activeState(false))
             .on("click", (event, d) => {
                 showPopup(d)
             })
+            .append("style").text(`
+                .link-active {
+                    stroke: #0075FF;
+                    stroke-width: .15em;
+                }
+                .label-active {
+                    fill: #0075FF;
+                    font-weight: bold;
+                }
+            `);
 
         const linkExtension = svg
             .append("g")
@@ -323,7 +320,7 @@
         </div>
         <ul>
             {#each searchResults as result (result.SAMPLE)}
-                <li on:click={() => selectSpecies(result)}>
+                <li on:click={() => handleListItemClick(result)}>
                     {result.SPECIES_NAME_PRINT}
                 </li>
             {/each}
@@ -678,7 +675,6 @@
         max-height: 12em;
         overflow-y: hidden;
         margin-top: 1em;
-        border-radius: .4em;
 
         &::-webkit-scrollbar {
             width: .5em;
@@ -696,18 +692,32 @@
         }
 
         &:not(:empty) {
-            overflow-y: auto;
+            overflow-y: scroll;
             max-height: 12em;
         }
     }
 
     .nav-search-filter > ul li {
-        margin-bottom: .6em;
+        height: 2.5em;
+
+        display: flex;
+        align-items: center;
+
+        margin-right: .6em;
+        padding: 0 .6em;
 
         list-style: none;
 
         font-size: .8em;
-        color: var(--color-3)
+        color: var(--color-3);
+
+        cursor: pointer;
+    }
+
+    .nav-search-filter > ul li:hover {
+        background-color: var(--color-3);
+
+        color: var(--color-1);
     }
 
     .nav-filter {
