@@ -126,6 +126,33 @@
         activeState(selectedResults);
     }
 
+    //     // JavaScript-deel
+    // function visualizeRelationships() {
+    //     // Voeg hier je code toe om de verwantschap tussen geselecteerde resultaten te visualiseren
+    //     // Gebruik hiervoor bijvoorbeeld D3.js of een andere bibliotheek naar keuze
+
+    //     // Voorbeeld van D3.js-code om lijnen te tekenen tussen geselecteerde resultaten
+    //     const svg = d3.select("svg"); // Zorg ervoor dat je een SVG-element hebt waarin je wilt tekenen
+    //     svg.selectAll("line").remove(); // Verwijder eerst alle bestaande lijnen
+
+    //     // Loop door de geselecteerde resultaten en teken lijnen tussen hen
+    //     for (let i = 0; i < selectedResults.length - 1; i++) {
+    //         const source = selectedResults[i];
+    //         for (let j = i + 1; j < selectedResults.length; j++) {
+    //             const target = selectedResults[j];
+
+    //             // Hier kun je D3.js gebruiken om een lijn te tekenen tussen source en target
+    //             // Voeg de nodige D3.js code toe op basis van je datamodel
+    //             svg.append("line")
+    //                 .attr("x1", /* x-coördinaat van source */)
+    //                 .attr("y1", /* y-coördinaat van source */)
+    //                 .attr("x2", /* x-coördinaat van target */)
+    //                 .attr("y2", /* y-coördinaat van target */)
+    //                 .style("stroke", "black");
+    //         }
+    //     }
+    // }
+
     // ********************************** //
 
     // **************** //
@@ -365,6 +392,7 @@
                     </div>
                 </li>
             {/each}
+            <!-- <button on:click={() => visualizeRelationships()}>Visualiseer Verwantschap</button> -->
         </ul>
     </form>
     <ul class="nav-filter">
