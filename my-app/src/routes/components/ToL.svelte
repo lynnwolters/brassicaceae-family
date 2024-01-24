@@ -73,6 +73,7 @@
         } else {
             console.error("Container not found");
         }
+        document.body.addEventListener("click", onDocumentClick);
     });
 
     // ********************************** //
@@ -157,6 +158,20 @@
 
     // ********************************** //
 
+    // *************************** //
+    // BACKGROUND REMOVE (SVELTE) //
+    // ************************* //
+
+    let isZoomed = false;
+    function updateBackground() {
+        const section = document.querySelector("main > section");
+        if (section) {
+            section.style.backgroundImage = isZoomed ? "none" : 'url("images/colors.svg")';
+        }
+    }
+
+    // ********************************** //
+
     // *********************** //
     // SEARCH FILTER (SVELTE) //
     // ********************* //
@@ -164,6 +179,7 @@
     let searchResults = [];
     let searchQuery = "";
     let selectedResults = [];
+    let isInputFieldClicked = false;
     const searchSpecies = (query) => {
         searchQuery = query; 
         if (query.trim() === "") {
@@ -171,8 +187,8 @@
         } else {
             searchResults = jsonData.filter(item => item.SPECIES_NAME_PRINT.toLowerCase().startsWith(query.toLowerCase()));
         }
+        updateButtonStates();
     };
-
     function toggleSelection(selectedResult) {
         const index = selectedResults.findIndex(result => result.SPECIES_NAME_PRINT === selectedResult.SPECIES_NAME_PRINT);
         if (index === -1) {
@@ -185,6 +201,32 @@
             isSelected: selectedResults.some(selected => selected.SPECIES_NAME_PRINT === result.SPECIES_NAME_PRINT)
         }));
         activeState(selectedResults);
+        updateButtonStates();
+    }
+    function resetSelection() {
+        selectedResults = [];
+        searchResults = searchResults.map(result => ({
+            ...result,
+            isSelected: false
+        }));
+        activeState(selectedResults);
+        updateButtonStates();
+    }
+    function onInputFieldClick() {
+        isInputFieldClicked = true;
+    }
+    function onDocumentClick(event) {
+        const formElement = document.querySelector(".nav-search-filter");
+        if (!formElement.contains(event.target)) {
+            isInputFieldClicked = false;
+        }
+    }
+    function updateButtonStates() {
+        const visualiseButton = document.getElementById("visualiseButton");
+        const resetButton = document.getElementById("resetButton");
+        const isAnyResultSelected = selectedResults.length > 0;
+        visualiseButton.disabled = !isAnyResultSelected;
+        resetButton.disabled = !isAnyResultSelected;
     }
 
     // ********************************** //
@@ -291,6 +333,8 @@
                 .duration(200)
                 .on("zoom", throttle((event) => {
                     svg.attr("transform", event.transform);
+                    isZoomed = event.transform.k > 1;
+                    updateBackground();
                 }, 50));
             svg.call(zoom);
 
@@ -388,11 +432,12 @@
         <form class="nav-search-filter">
             <h3>Search by species</h3>
             <div>
-                <input type="text" placeholder="Search..." bind:value="{searchQuery}" on:input={() => searchSpecies(searchQuery)}>
+                <input type="text" placeholder="Search..." bind:value="{searchQuery}" on:input={() => searchSpecies(searchQuery)} on:click={onInputFieldClick}>
                 <button>
                     <img src="images/search.svg" alt="search">
                 </button>
             </div>
+            {#if isInputFieldClicked}
             <ul>
                 {#each searchResults as result (result.SAMPLE)}
                     <li on:click={() => toggleSelection(result)}>
@@ -405,23 +450,24 @@
                     </li>
                 {/each}
             </ul>
-            <div>
-                <button on:click={() => openCladogram()}>
-                    <div>
-                        <img src="images/relation.svg" alt="relation">
-                    </div>
-                    <p>Visualise relationship</p>
-                </button>
-                <button>
-                    <div>
-                        <img src="images/close.svg" alt="close">
-                    </div>
-                    <p>Reset</p>
-                </button>
-            </div>
+                <div>
+                    <button on:click={() => openCladogram()} id="visualiseButton" disabled>
+                        <div>
+                            <img src="images/relation.svg" alt="relation">
+                        </div>
+                        <p>Visualise relationship</p>
+                    </button>
+                    <button on:click={resetSelection} id="resetButton" disabled>
+                        <div>
+                            <img src="images/close.svg" alt="close">
+                        </div>
+                        <p>Reset</p>
+                    </button>
+                </div>
             <div id="cladogramContainer" style="display: none;">
                 <img src="images/cladogram.svg" alt="cladogram">
             </div>
+            {/if}
         </form>
         <ul class="nav-filter">
             <h3>Filter</h3>
@@ -831,6 +877,11 @@
 
 <style>
 
+    #visualiseButton:disabled, #resetButton:disabled {
+        opacity: 0.4;
+        cursor: not-allowed; 
+    }
+
     /* **** */
     /* NAV */
     /* ** */
@@ -999,8 +1050,6 @@
 
         overflow-y: hidden;
 
-        margin: 1em 0;
-
         &::-webkit-scrollbar {
             width: .5em;
         }
@@ -1040,6 +1089,14 @@
         cursor: pointer;
     }
 
+    .nav-search-filter > ul li:nth-of-type(1) {
+        margin-top: 1em;
+    }
+
+    .nav-search-filter > ul li:last-of-type {
+        margin-bottom: 1em;
+    }
+
     .nav-search-filter > ul li div {
         aspect-ratio: 1/1;
         height: 50%;
@@ -1063,7 +1120,7 @@
     .nav-search-filter div:nth-of-type(2) {
         height: 2.5em;
 
-        margin-bottom: 1em;
+        margin: 1em 0;
     }
 
     .nav-search-filter div:nth-of-type(2) button {
@@ -1118,6 +1175,8 @@
     .nav-search-filter div:nth-of-type(3) {
         width: 100%;
         height: 12em;
+
+        cursor: pointer;
     }
 
     .nav-search-filter div:nth-of-type(3) img {
@@ -1538,7 +1597,7 @@
         justify-content: end;
         align-items: center;
 
-        padding: 0 1em 1em 1em;
+        padding: 0 2.5em 3.5em 0;
 
         background-color: transparent;
     }
