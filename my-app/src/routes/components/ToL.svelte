@@ -107,6 +107,10 @@
                     .raise();
                 while ((d = d.parent));
             });
+        searchResults = searchResults.map(result => ({
+            ...result,
+            isSelected: result.SPECIES_NAME_PRINT === activeSpeciesName
+        }));
     }
 
     // ********************************** //
@@ -135,7 +139,10 @@
         if (query.trim() === "") {
             searchResults = [];
         } else {
-            searchResults = jsonData.filter(item => item.SPECIES_NAME_PRINT.toLowerCase().startsWith(query.toLowerCase()));
+            searchResults = jsonData.map(item => ({
+                ...item,
+                isSelected: item.SPECIES_NAME_PRINT.toLowerCase().startsWith(query.toLowerCase())
+            }));
         }
     };
 
@@ -338,7 +345,9 @@
                 <li on:click={() => activeState(result)}>
                     {result.SPECIES_NAME_PRINT}
                     <div>
-                        <img src="images/checkbox.svg" alt="checkbox">
+                        {#if result.isSelected}
+                            <img src="images/checkbox.svg" alt="checkbox">
+                        {/if}
                     </div>
                 </li>
             {/each}
@@ -752,8 +761,6 @@
     .nav-search-filter > ul li:hover {
         border: solid.08em var(--color-3);
         border-radius: 6em;
-
-        color: var(--color-1);
     }
 
     .nav-filter {
