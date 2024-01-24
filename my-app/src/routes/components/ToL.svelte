@@ -92,25 +92,38 @@
     // ACTIVE STATE (SVELTE / D3) //
     // ************************* //
 
-    function activeState(activeResult) {
+    function activeState(activeResults) {
         d3.selectAll(".label-active")
             .classed("label-active", false);
         d3.selectAll(".link-active")
             .classed("link-active", false);
-        const activeSpeciesName = activeResult.SPECIES_NAME_PRINT;
-        d3.selectAll("text")
-            .filter((d) => d.data.speciesName === activeSpeciesName)
-            .classed("label-active", true)
-            .each((d) => {
-                do d3.select(d.linkNode)
-                    .classed("link-active", true)
-                    .raise();
-                while ((d = d.parent));
-            });
+
+        activeResults.forEach(activeResult => {
+            const activeSpeciesName = activeResult.SPECIES_NAME_PRINT;
+            d3.selectAll("text")
+                .filter((d) => d.data.speciesName === activeSpeciesName)
+                .classed("label-active", true)
+                .each((d) => {
+                    do d3.select(d.linkNode)
+                        .classed("link-active", true)
+                        .raise();
+                    while ((d = d.parent));
+                });
+        });
+    }
+
+    function toggleSelection(selectedResult) {
+        const index = selectedResults.findIndex(result => result.SPECIES_NAME_PRINT === selectedResult.SPECIES_NAME_PRINT);
+        if (index === -1) {
+            selectedResults.push(selectedResult);
+        } else {
+            selectedResults.splice(index, 1);
+        }
         searchResults = searchResults.map(result => ({
             ...result,
-            isSelected: result.SPECIES_NAME_PRINT === activeSpeciesName
+            isSelected: selectedResults.some(selected => selected.SPECIES_NAME_PRINT === result.SPECIES_NAME_PRINT)
         }));
+        activeState(selectedResults);
     }
 
     // ********************************** //
@@ -135,6 +148,7 @@
 
     let searchResults = [];
     let searchQuery = "";
+    let selectedResults = [];
     const searchSpecies = (query) => {
         if (query.trim() === "") {
             searchResults = [];
@@ -342,7 +356,7 @@
         </div>
         <ul>
             {#each searchResults as result (result.SAMPLE)}
-                <li on:click={() => activeState(result)}>
+                <li on:click={() => toggleSelection(result)}>
                     {result.SPECIES_NAME_PRINT}
                     <div>
                         {#if result.isSelected}
@@ -447,9 +461,6 @@
                     <div>
                         <button>
                             <img src="images/share.svg" alt="share">
-                        </button>
-                        <button>
-                            <img src="images/favorite.svg" alt="favorite">
                         </button>
                     </div>
                     <button on:click={hidePopup}>
