@@ -130,9 +130,29 @@
     // DROPDOWN (SVELTE) //
     // **************** //
 
-    let isDropdownOpen = false;
-    function toggleDropdown() {
-    isDropdownOpen = !isDropdownOpen;
+    let dropdownStates = [false, false, false, false, false, false, false]; 
+    function toggleDropdown(index) {
+        dropdownStates[index] = !dropdownStates[index];
+        for (let i = 0; i < dropdownStates.length; i++) {
+            if (i !== index) {
+                dropdownStates[i] = false;
+            }
+        }
+    }
+
+    // ********************************** //
+
+    // ****************** //
+    // CLADOGRAM(SVELTE) //
+    // **************** //
+
+    function openCladogram() {
+        var cladogramContainer = document.getElementById("cladogramContainer");
+        if (cladogramContainer.style.display === "none") {
+            cladogramContainer.style.display = "block";
+        } else {
+            cladogramContainer.style.display = "none";
+        }
     }
 
     // ********************************** //
@@ -352,178 +372,363 @@
 </script>
 
 <nav>
-    <a class="nav-logo" href="#">
-        <div>
+    <div class="scroll-container">
+        <a class="nav-logo" href="#">
             <div>
-                <img src="images/tree.svg" alt="tree">
+                <div>
+                    <img src="images/tree.svg" alt="tree">
+                </div>
+                <h1>Brassicaceae</h1>
             </div>
-            <h1>Brassicaceae</h1>
-        </div>
-        <div>
-            <h1>Tree of Life</h1>
-        </div>
-    </a>
-    <h2 class="nav-title">Search and filter</h2>
-    <form class="nav-search-filter">
-        <h3>Search by species</h3>
-        <div>
-            <input type="text" placeholder="Search..." bind:value="{searchQuery}" on:input={() => searchSpecies(searchQuery)}>
-            <button>
-                <img src="images/search.svg" alt="search">
-            </button>
-        </div>
-        <ul>
-            {#each searchResults as result (result.SAMPLE)}
-                <li on:click={() => toggleSelection(result)}>
-                    {result.SPECIES_NAME_PRINT}
+            <div>
+                <h1>Tree of Life</h1>
+            </div>
+        </a>
+        <h2 class="nav-title">Search and filter</h2>
+        <form class="nav-search-filter">
+            <h3>Search by species</h3>
+            <div>
+                <input type="text" placeholder="Search..." bind:value="{searchQuery}" on:input={() => searchSpecies(searchQuery)}>
+                <button>
+                    <img src="images/search.svg" alt="search">
+                </button>
+            </div>
+            <ul>
+                {#each searchResults as result (result.SAMPLE)}
+                    <li on:click={() => toggleSelection(result)}>
+                        {result.SPECIES_NAME_PRINT}
+                        <div>
+                            {#if result.isSelected}
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            {/if}
+                        </div>
+                    </li>
+                {/each}
+            </ul>
+            <div>
+                <button on:click={() => openCladogram()}>
                     <div>
-                        {#if result.isSelected}
-                            <img src="images/checkbox.svg" alt="checkbox">
-                        {/if}
+                        <img src="images/relation.svg" alt="relation">
                     </div>
-                </li>
-            {/each}
-        </ul>
-        <div>
-            <button>
-                <div>
-                    <img src="images/relation.svg" alt="relation">
-                </div>
-                <p>Visualise relationship</p>
-            </button>
-            <button>
-                <div>
-                    <img src="images/close.svg" alt="close">
-                </div>
-                <p>Reset</p>
-            </button>
-        </div>
-    </form>
-    <ul class="nav-filter">
-        <li>
+                    <p>Visualise relationship</p>
+                </button>
+                <button>
+                    <div>
+                        <img src="images/close.svg" alt="close">
+                    </div>
+                    <p>Reset</p>
+                </button>
+            </div>
+            <div id="cladogramContainer" style="display: none;">
+                <img src="images/cladogram.svg" alt="cladogram">
+            </div>
+        </form>
+        <ul class="nav-filter">
             <h3>Filter</h3>
-        </li>
-        <li>
-            <button on:click={toggleDropdown}>
-                <p>Supertribe</p>
-                <div>
-                    <img src="images/dropdown.svg" alt="dropdown">
-                </div>
-            </button>
-            {#if isDropdownOpen}
-                <ul>
-                    <!-- <div>
-                        <input type="text" placeholder="Search..." bind:value="{searchQuery}" on:input={() => searchSpecies(searchQuery)}>
-                        <button>
-                            <img src="images/search.svg" alt="search">
-                        </button>
-                    </div> -->
-                    <li>
-                        <p>Supertribe</p>
-                        <div>
-                            <img src="images/checkbox.svg" alt="checkbox">
-                        </div>
-                    </li>
-                    <li>
-                        <p>Supertribe</p>
-                        <div>
-                            <img src="images/checkbox.svg" alt="checkbox">
-                        </div>
-                    </li>
-                    <li>
-                        <p>Supertribe</p>
-                        <div>
-                            <img src="images/checkbox.svg" alt="checkbox">
-                        </div>
-                    </li>
-                    <li>
-                        <p>Supertribe</p>
-                        <div>
-                            <img src="images/checkbox.svg" alt="checkbox">
-                        </div>
-                    </li>
-                    <li>
-                        <p>Supertribe</p>
-                        <div>
-                            <img src="images/checkbox.svg" alt="checkbox">
-                        </div>
-                    </li>
-                    <li>
-                        <p>Supertribe</p>
-                        <div>
-                            <img src="images/checkbox.svg" alt="checkbox">
-                        </div>
-                    </li>
-                    <li>
-                        <p>Supertribe</p>
-                        <div>
-                            <img src="images/checkbox.svg" alt="checkbox">
-                        </div>
-                    </li>
-                    <li>
-                        <p>Supertribe</p>
-                        <div>
-                            <img src="images/checkbox.svg" alt="checkbox">
-                        </div>
-                    </li>
-                    <li>
-                        <p>Supertribe</p>
-                        <div>
-                            <img src="images/checkbox.svg" alt="checkbox">
-                        </div>
-                    </li>
-                </ul>
-            {/if}
-        </li>
-        <li>
-            <button>
-                <p>Tribe</p>
-                <div>
-                    <img src="images/dropdown.svg" alt="dropdown">
-                </div>
-            </button>
-        </li>
-        <li>
-            <button>
-                <p>Genera</p>
-                <div>
-                    <img src="images/dropdown.svg" alt="dropdown">
-                </div>
-            </button>
-        </li>
-        <li>
-            <button>
-                <p>Species</p>
-                <div>
-                    <img src="images/dropdown.svg" alt="dropdown">
-                </div>
-            </button>
-        </li>
-        <li>
-            <button>
-                <p>Continent</p>
-                <div>
-                    <img src="images/dropdown.svg" alt="dropdown">
-                </div>
-            </button>
-        </li>
-        <li>
-            <button>
-                <p>Use</p>
-                <div>
-                    <img src="images/dropdown.svg" alt="dropdown">
-                </div>
-            </button>
-        </li>
-        <li>
-            <button>
-                <p>Age</p>
-                <div>
-                    <img src="images/dropdown.svg" alt="dropdown">
-                </div>
-            </button>
-        </li>
-    </ul>
+            <li>
+                <button on:click={() => toggleDropdown(0)}>
+                    <p>Species</p>
+                    <div>
+                        <img src="images/dropdown.svg" alt="dropdown">
+                    </div>
+                </button>
+                {#if dropdownStates[0]}
+                    <ul>
+                        <form>
+                            <input type="text" placeholder="Find species...">
+                            <button>
+                                <div>
+                                    <img src="images/search.svg" alt="search">
+                                </div>
+                            </button>
+                        </form>
+                        <li>
+                            <p>Species</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Species</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Species</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Species</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Species</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Species</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Species</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Species</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Species</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                    </ul>
+                {/if}
+            </li>
+            <li>
+                <button on:click={() => toggleDropdown(1)}>
+                    <p>Tribe</p>
+                    <div>
+                        <img src="images/dropdown.svg" alt="dropdown">
+                    </div>
+                </button>
+                {#if dropdownStates[1]}
+                    <ul>
+                        <form>
+                            <input type="text" placeholder="Find tribe..">
+                            <button>
+                                <div>
+                                    <img src="images/search.svg" alt="search">
+                                </div>
+                            </button>
+                        </form>
+                        <li>
+                            <p>Tribe</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Tribe</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Tribe</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                    </ul>
+                {/if}
+            </li>
+            <li>
+                <button on:click={() => toggleDropdown(2)}>
+                    <p>Supertribe</p>
+                    <div>
+                        <img src="images/dropdown.svg" alt="dropdown">
+                    </div>
+                </button>
+                {#if dropdownStates[2]}
+                    <ul>
+                        <form>
+                            <input type="text" placeholder="Find supertribe..">
+                            <button>
+                                <div>
+                                    <img src="images/search.svg" alt="search">
+                                </div>
+                            </button>
+                        </form>
+                        <li>
+                            <p>Supertribe</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Supertribe</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Supertribe</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                    </ul>
+                {/if}
+            </li>
+            <li>
+                <button on:click={() => toggleDropdown(3)}>
+                    <p>Continent</p>
+                    <div>
+                        <img src="images/dropdown.svg" alt="dropdown">
+                    </div>
+                </button>
+                {#if dropdownStates[3]}
+                    <ul>
+                        <form>
+                            <input type="text" placeholder="Find continent..">
+                            <button>
+                                <div>
+                                    <img src="images/search.svg" alt="search">
+                                </div>
+                            </button>
+                        </form>
+                        <li>
+                            <p>Continent</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Continent</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Continent</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                    </ul>
+                {/if}
+            </li>
+            <li>
+                <button on:click={() => toggleDropdown(4)}>
+                    <p>Use</p>
+                    <div>
+                        <img src="images/dropdown.svg" alt="dropdown">
+                    </div>
+                </button>
+                {#if dropdownStates[4]}
+                    <ul>
+                        <form>
+                            <input type="text" placeholder="Find use..">
+                            <button>
+                                <div>
+                                    <img src="images/search.svg" alt="search">
+                                </div>
+                            </button>
+                        </form>
+                        <li>
+                            <p>Use</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Use</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Use</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                    </ul>
+                {/if}
+            </li>
+            <li>
+                <button on:click={() => toggleDropdown(5)}>
+                    <p>Age</p>
+                    <div>
+                        <img src="images/dropdown.svg" alt="dropdown">
+                    </div>
+                </button>
+                {#if dropdownStates[5]}
+                    <ul>
+                        <form>
+                            <input type="text" placeholder="Find age..">
+                            <button>
+                                <div>
+                                    <img src="images/search.svg" alt="search">
+                                </div>
+                            </button>
+                        </form>
+                        <li>
+                            <p>Age</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Age</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Age</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                    </ul>
+                {/if}
+            </li>
+            <li>
+                <button on:click={() => toggleDropdown(6)}>
+                    <p>Tribe</p>
+                    <div>
+                        <img src="images/dropdown.svg" alt="dropdown">
+                    </div>
+                </button>
+                {#if dropdownStates[6]}
+                    <ul>
+                        <form>
+                            <input type="text" placeholder="Find tribe..">
+                            <button>
+                                <div>
+                                    <img src="images/search.svg" alt="search">
+                                </div>
+                            </button>
+                        </form>
+                        <li>
+                            <p>Tribe</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Tribe</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                        <li>
+                            <p>Tribe</p>
+                            <div>
+                                <img src="images/checkbox.svg" alt="checkbox">
+                            </div>
+                        </li>
+                    </ul>
+                {/if}
+            </li>
+        </ul>
+    </div>
 </nav>
 
 <main>
@@ -567,14 +772,6 @@
                             </div>
                             <div>
                                 <p>Kind</p>
-                            </div>
-                        </button>
-                        <button>
-                            <div>
-                                <img src="images/age.svg" alt="age">
-                            </div>
-                            <div>
-                                <p>Age</p>
                             </div>
                         </button>
                     </div>
@@ -638,6 +835,10 @@
     /* NAV */
     /* ** */
 
+    .scroll-container {
+        height: calc(100vh - 8em);
+    }
+
     nav {
         width: 24em;
         height: fit-content;
@@ -646,6 +847,7 @@
         top: 0;
         left: 0;
         z-index: 1000;
+        overflow-y: scroll;
 
         margin: 2.5em;
         padding: 1.5em;
@@ -794,8 +996,10 @@
 
     .nav-search-filter > ul {
         max-height: 12em;
+
         overflow-y: hidden;
-        margin-top: 1em;
+
+        margin: 1em 0;
 
         &::-webkit-scrollbar {
             width: .5em;
@@ -836,10 +1040,6 @@
         cursor: pointer;
     }
 
-    .nav-search-filter > ul li:last-of-type {
-        margin-bottom: 1em;
-    }
-
     .nav-search-filter > ul li div {
         aspect-ratio: 1/1;
         height: 50%;
@@ -857,8 +1057,7 @@
     }
 
     .nav-search-filter > ul li:hover {
-        border: solid.08em var(--color-3);
-        border-radius: 6em;
+        color: var(--color-4);
     }
 
     .nav-search-filter div:nth-of-type(2) {
@@ -914,6 +1113,15 @@
 
     .nav-search-filter div:nth-of-type(2) button:nth-of-type(2):hover {
         background-color: var(--color-8);
+    }
+
+    .nav-search-filter div:nth-of-type(3) {
+        width: 100%;
+        height: 12em;
+    }
+
+    .nav-search-filter div:nth-of-type(3) img {
+        width: 100%;
     }
 
     .nav-filter li {
@@ -974,7 +1182,8 @@
     }
 
     .nav-filter li ul {
-        max-height: 12em;
+        max-height: fit-content;
+
         overflow-y: hidden;
 
         padding: 1em;
@@ -983,23 +1192,21 @@
         border-radius: .4em;
 
         &::-webkit-scrollbar {
-            width: .5em;
+            width: 0;
         }
 
         &::-webkit-scrollbar-thumb {
-            border: solid .1em var(--color-4);
-            border-radius: 6em;
-            background-color: var(--color-1); 
+            background: transparent;
         }
 
         &::-webkit-scrollbar-track {
-            border-radius: 6em;
-            background-color: var(--color-4); 
+            background: transparent;
         }
 
         &:not(:empty) {
-            overflow-y: scroll;
             max-height: 12em;
+
+            overflow-y: auto;
         }
     }
 
@@ -1016,6 +1223,10 @@
         cursor: pointer;
     }
 
+    .nav-filter li ul li:hover {
+        color: var(--color-4);
+    }
+
     .nav-filter li ul li div {
         aspect-ratio: 1/1;
         height: 1.25em;
@@ -1030,6 +1241,73 @@
 
     .nav-filter li ul li div img {
         width: 50%;
+    }
+
+    .nav-filter li ul form {
+        height: 2em;
+
+        display: flex;
+
+        margin-bottom: 1em;
+    }
+
+    .nav-filter li ul form input {
+        width: 100%;
+        height: 100%;
+
+        padding-left: 1em;
+
+        border: solid .08em var(--color-3);
+        border-radius: 6em 0 0 6em;
+
+        background-color: var(--color-2);
+
+        color: var(--color-3);
+    }
+
+    .nav-filter li ul form button {
+        width: 2.5em;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        border: none;
+        border-radius: 0 6em 6em 0;
+
+        background-color: var(--color-3);
+    }
+
+    .nav-filter li ul form button div {
+        aspect-ratio: 1/1;
+        height: 100%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .nav-filter li ul form button div img {
+        width: 50%;
+    }
+
+    .nav-filter li ul form input:focus {
+        outline: none;
+    }
+
+    .nav-filter li ul form input::placeholder {
+        color: var(--color-3);
+        opacity: .4;
+    }
+
+    .nav-filter li ul form input:hover {
+        border: solid .08em var(--color-4);
+    }
+
+    .nav-filter li ul form button:hover {
+        border: none;
+
+        background-color: var(--color-4);
     }
 
     /* **** */
