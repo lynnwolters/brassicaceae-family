@@ -97,61 +97,18 @@
             .classed("label-active", false);
         d3.selectAll(".link-active")
             .classed("link-active", false);
-
         activeResults.forEach(activeResult => {
             const activeSpeciesName = activeResult.SPECIES_NAME_PRINT;
             d3.selectAll("text")
                 .filter((d) => d.data.speciesName === activeSpeciesName)
                 .classed("label-active", true)
                 .each((d) => {
-                    do d3.select(d.linkNode)
+                    d3.select(d.linkNode)
                         .classed("link-active", true)
                         .raise();
-                    while ((d = d.parent));
                 });
         });
     }
-
-    function toggleSelection(selectedResult) {
-        const index = selectedResults.findIndex(result => result.SPECIES_NAME_PRINT === selectedResult.SPECIES_NAME_PRINT);
-        if (index === -1) {
-            selectedResults.push(selectedResult);
-        } else {
-            selectedResults.splice(index, 1);
-        }
-        searchResults = searchResults.map(result => ({
-            ...result,
-            isSelected: selectedResults.some(selected => selected.SPECIES_NAME_PRINT === result.SPECIES_NAME_PRINT)
-        }));
-        activeState(selectedResults);
-    }
-
-    //     // JavaScript-deel
-    // function visualizeRelationships() {
-    //     // Voeg hier je code toe om de verwantschap tussen geselecteerde resultaten te visualiseren
-    //     // Gebruik hiervoor bijvoorbeeld D3.js of een andere bibliotheek naar keuze
-
-    //     // Voorbeeld van D3.js-code om lijnen te tekenen tussen geselecteerde resultaten
-    //     const svg = d3.select("svg"); // Zorg ervoor dat je een SVG-element hebt waarin je wilt tekenen
-    //     svg.selectAll("line").remove(); // Verwijder eerst alle bestaande lijnen
-
-    //     // Loop door de geselecteerde resultaten en teken lijnen tussen hen
-    //     for (let i = 0; i < selectedResults.length - 1; i++) {
-    //         const source = selectedResults[i];
-    //         for (let j = i + 1; j < selectedResults.length; j++) {
-    //             const target = selectedResults[j];
-
-    //             // Hier kun je D3.js gebruiken om een lijn te tekenen tussen source en target
-    //             // Voeg de nodige D3.js code toe op basis van je datamodel
-    //             svg.append("line")
-    //                 .attr("x1", /* x-coördinaat van source */)
-    //                 .attr("y1", /* y-coördinaat van source */)
-    //                 .attr("x2", /* x-coördinaat van target */)
-    //                 .attr("y2", /* y-coördinaat van target */)
-    //                 .style("stroke", "black");
-    //         }
-    //     }
-    // }
 
     // ********************************** //
 
@@ -169,6 +126,17 @@
 
     // ********************************** //
 
+    // ****************** //
+    // DROPDOWN (SVELTE) //
+    // **************** //
+
+    let isDropdownOpen = false;
+    function toggleDropdown() {
+    isDropdownOpen = !isDropdownOpen;
+    }
+
+    // ********************************** //
+
     // *********************** //
     // SEARCH FILTER (SVELTE) //
     // ********************* //
@@ -177,15 +145,27 @@
     let searchQuery = "";
     let selectedResults = [];
     const searchSpecies = (query) => {
+        searchQuery = query; 
         if (query.trim() === "") {
             searchResults = [];
         } else {
-            searchResults = jsonData.map(item => ({
-                ...item,
-                isSelected: item.SPECIES_NAME_PRINT.toLowerCase().startsWith(query.toLowerCase())
-            }));
+            searchResults = jsonData.filter(item => item.SPECIES_NAME_PRINT.toLowerCase().startsWith(query.toLowerCase()));
         }
     };
+
+    function toggleSelection(selectedResult) {
+        const index = selectedResults.findIndex(result => result.SPECIES_NAME_PRINT === selectedResult.SPECIES_NAME_PRINT);
+        if (index === -1) {
+            selectedResults.push(selectedResult);
+        } else {
+            selectedResults.splice(index, 1);
+        }
+        searchResults = searchResults.map(result => ({
+            ...result,
+            isSelected: selectedResults.some(selected => selected.SPECIES_NAME_PRINT === result.SPECIES_NAME_PRINT)
+        }));
+        activeState(selectedResults);
+    }
 
     // ********************************** //
 
@@ -230,7 +210,7 @@
             .append("style").text(`
                 .link-active {
                     stroke: #0075FF;
-                    stroke-width: .15em;
+                    stroke-width: .2em;
                 }
                 .label-active {
                     fill: #0075FF;
@@ -242,6 +222,9 @@
             return function (event, d) {
                 d3.select(this)
                     .classed("label-active", active);
+                d3.select(d.linkExtensionNode)
+                    .classed("link-extension--active", active)
+                    .raise();
                 do d3.select(d.linkNode)
                     .classed("link-active", active)
                     .raise();
@@ -271,9 +254,17 @@
             .join("path")
             .each(function (d) {
                 d.target.linkNode = this;
-                d3.select(this).attr("data-source", d.source.data.id).attr("data-target", d.target.data.id);
+                // d3.select(this).attr("data-source", d.source.data.id).attr("data-target", d.target.data.id);
             })
             .attr("d", linkVariable)
+
+            function update(checked) {
+                const t = d3.transition().duration(750);
+                linkExtension
+                    .transition(t)
+                    .attr("d", checked ? linkExtensionVariable : linkExtensionConstant);
+                link.transition(t).attr("d", checked ? linkVariable : linkConstant);
+            }
 
             const zoom = d3.zoom()
                 .scaleExtent([1, 5])
@@ -283,7 +274,7 @@
                 }, 50));
             svg.call(zoom);
 
-        return Object.assign(svg.node());
+            return Object.assign(svg.node(), { update });
     };
 
     const cluster = d3
@@ -374,7 +365,7 @@
     </a>
     <h2 class="nav-title">Search and filter</h2>
     <form class="nav-search-filter">
-        <h3>Search</h3>
+        <h3>Search by species</h3>
         <div>
             <input type="text" placeholder="Search..." bind:value="{searchQuery}" on:input={() => searchSpecies(searchQuery)}>
             <button>
@@ -392,20 +383,97 @@
                     </div>
                 </li>
             {/each}
-            <!-- <button on:click={() => visualizeRelationships()}>Visualiseer Verwantschap</button> -->
         </ul>
+        <div>
+            <button>
+                <div>
+                    <img src="images/relation.svg" alt="relation">
+                </div>
+                <p>Visualise relationship</p>
+            </button>
+            <button>
+                <div>
+                    <img src="images/close.svg" alt="close">
+                </div>
+                <p>Reset</p>
+            </button>
+        </div>
     </form>
     <ul class="nav-filter">
         <li>
             <h3>Filter</h3>
         </li>
         <li>
-            <button>
+            <button on:click={toggleDropdown}>
                 <p>Supertribe</p>
                 <div>
                     <img src="images/dropdown.svg" alt="dropdown">
                 </div>
             </button>
+            {#if isDropdownOpen}
+                <ul>
+                    <!-- <div>
+                        <input type="text" placeholder="Search..." bind:value="{searchQuery}" on:input={() => searchSpecies(searchQuery)}>
+                        <button>
+                            <img src="images/search.svg" alt="search">
+                        </button>
+                    </div> -->
+                    <li>
+                        <p>Supertribe</p>
+                        <div>
+                            <img src="images/checkbox.svg" alt="checkbox">
+                        </div>
+                    </li>
+                    <li>
+                        <p>Supertribe</p>
+                        <div>
+                            <img src="images/checkbox.svg" alt="checkbox">
+                        </div>
+                    </li>
+                    <li>
+                        <p>Supertribe</p>
+                        <div>
+                            <img src="images/checkbox.svg" alt="checkbox">
+                        </div>
+                    </li>
+                    <li>
+                        <p>Supertribe</p>
+                        <div>
+                            <img src="images/checkbox.svg" alt="checkbox">
+                        </div>
+                    </li>
+                    <li>
+                        <p>Supertribe</p>
+                        <div>
+                            <img src="images/checkbox.svg" alt="checkbox">
+                        </div>
+                    </li>
+                    <li>
+                        <p>Supertribe</p>
+                        <div>
+                            <img src="images/checkbox.svg" alt="checkbox">
+                        </div>
+                    </li>
+                    <li>
+                        <p>Supertribe</p>
+                        <div>
+                            <img src="images/checkbox.svg" alt="checkbox">
+                        </div>
+                    </li>
+                    <li>
+                        <p>Supertribe</p>
+                        <div>
+                            <img src="images/checkbox.svg" alt="checkbox">
+                        </div>
+                    </li>
+                    <li>
+                        <p>Supertribe</p>
+                        <div>
+                            <img src="images/checkbox.svg" alt="checkbox">
+                        </div>
+                    </li>
+                </ul>
+            {/if}
         </li>
         <li>
             <button>
@@ -456,26 +524,6 @@
             </button>
         </li>
     </ul>
-    <!-- <div class="nav-options">
-        <button>
-            <div>
-                <img src="images/filter.svg" alt="filter">
-            </div>
-            <p>Apply</p>
-        </button>
-        <button>
-            <div>
-                <img src="images/relation.svg" alt="relation">
-            </div>
-            <p>Relation</p>
-        </button>
-        <button>
-            <div>
-                <img src="images/close.svg" alt="close">
-            </div>
-            <p>Reset</p>
-        </button>
-    </div> -->
 </nav>
 
 <main>
@@ -585,12 +633,13 @@
 </footer>
 
 <style>
+
     /* **** */
     /* NAV */
     /* ** */
 
     nav {
-        width: fit-content;
+        width: 24em;
         height: fit-content;
 
         position: fixed;
@@ -598,16 +647,19 @@
         left: 0;
         z-index: 1000;
 
-        margin: 1em 0 0 1em;
-        padding: 1em;
+        margin: 2.5em;
+        padding: 1.5em;
 
-        border: solid .02em var(--color-3);
+        border: solid .02em var(--color-9);
         border-radius: .4em;
 
         background-color: var(--color-2);
+
+        box-shadow: 7px 7px 16px -2px rgba(240,240,240,1);
     }
 
     .nav-logo {
+        width: 100%;
         height: 2.5em;
 
         display: flex;
@@ -617,6 +669,7 @@
     }
 
     .nav-logo div {
+        width: 100%;
         height: 100%;
 
         display: flex;
@@ -651,6 +704,8 @@
     }
 
     .nav-logo > div:nth-of-type(2) {
+        display: flex;
+
         padding: 0 1em;
 
         border-radius: 0 6em 6em 0;
@@ -688,7 +743,7 @@
         align-items: center;
     }
 
-    .nav-search-filter > div input {
+    .nav-search-filter div:nth-of-type(1) input {
         width: 100%;
         height: 100%;
 
@@ -702,16 +757,16 @@
         color: var(--color-3);
     }
 
-    .nav-search-filter > div input:focus {
+    .nav-search-filter div:nth-of-type(1) input:focus {
         outline: none;
     }
 
-    .nav-search-filter > div input::placeholder {
+    .nav-search-filter div:nth-of-type(1) input::placeholder {
         color: var(--color-3);
         opacity: .4;
     }
 
-    .nav-search-filter > div button {
+    .nav-search-filter div:nth-of-type(1) button {
         aspect-ratio: 1/1;
         height: 100%;
 
@@ -725,15 +780,15 @@
         background-color: var(--color-3);
     }
 
-    .nav-search-filter > div button img {
+    .nav-search-filter div:nth-of-type(1) button img {
         width: 40%;
     }
 
-    .nav-search-filter > div input:hover {
+    .nav-search-filter div:nth-of-type(1) input:hover {
         border: solid .08em var(--color-4);
     }
 
-    .nav-search-filter > div button:hover {
+    .nav-search-filter div:nth-of-type(1) button:hover {
         background-color: var(--color-4);
     }
 
@@ -781,6 +836,10 @@
         cursor: pointer;
     }
 
+    .nav-search-filter > ul li:last-of-type {
+        margin-bottom: 1em;
+    }
+
     .nav-search-filter > ul li div {
         aspect-ratio: 1/1;
         height: 50%;
@@ -789,8 +848,8 @@
         justify-content: center;
         align-items: center;
 
-        border: solid .08em var(--color-3);
-        border-radius: .4em;
+        border: solid .08em var(--color-4);
+        border-radius: .3em;
     }
 
     .nav-search-filter > ul li img {
@@ -802,8 +861,59 @@
         border-radius: 6em;
     }
 
-    .nav-filter {
+    .nav-search-filter div:nth-of-type(2) {
+        height: 2.5em;
+
         margin-bottom: 1em;
+    }
+
+    .nav-search-filter div:nth-of-type(2) button {
+        height: 100%;
+
+        display: flex;
+        align-items: center;
+
+        padding: 0 1em;
+
+        border: none;
+        border-radius: 6em;
+
+        color:var(--color-1)
+    }
+
+    .nav-search-filter div:nth-of-type(2) button div {
+        aspect-ratio: 1/1;
+        height: 100%;
+
+        display: flex;
+        justify-content: start;
+        align-items: center;
+    }
+
+    .nav-search-filter div:nth-of-type(2) button div img {
+        width: 40%;
+    }
+
+    .nav-search-filter div:nth-of-type(2) button:nth-of-type(1) {
+        margin-right: 1em;
+
+        border: solid .08em var(--color-4);
+
+        background-color: var(--color-3);
+    }
+
+    .nav-search-filter div:nth-of-type(2) button:nth-of-type(2) {
+        border: solid .08em var(--color-8);
+
+        background-color: var(--color-7);
+    }
+
+    .nav-search-filter div:nth-of-type(2) button:nth-of-type(1):hover {
+        background-color: var(--color-4);
+    }
+
+    .nav-search-filter div:nth-of-type(2) button:nth-of-type(2):hover {
+        background-color: var(--color-8);
     }
 
     .nav-filter li {
@@ -819,7 +929,11 @@
     }
 
     .nav-filter li {
-        margin-bottom: .6em;
+        margin-bottom: .8em;
+    }
+
+    .nav-filter li:last-of-type {
+        margin-bottom: 0;
     }
 
     .nav-filter li button {
@@ -830,9 +944,10 @@
         justify-content: space-between;
         align-items: center;
 
+        margin-bottom: 1em;
         padding: 0 1em 0 1em;
 
-        border: solid .08em var(--color-3);
+        border: solid .08em var(--color-4);
         border-radius: 6em;
 
         background-color: var(--color-2);
@@ -855,52 +970,67 @@
     }
 
     .nav-filter li button:hover {
+        border: solid .08em var(--color-3);
+    }
+
+    .nav-filter li ul {
+        max-height: 12em;
+        overflow-y: hidden;
+
+        padding: 1em;
+
         border: solid .08em var(--color-4);
+        border-radius: .4em;
+
+        &::-webkit-scrollbar {
+            width: .5em;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border: solid .1em var(--color-4);
+            border-radius: 6em;
+            background-color: var(--color-1); 
+        }
+
+        &::-webkit-scrollbar-track {
+            border-radius: 6em;
+            background-color: var(--color-4); 
+        }
+
+        &:not(:empty) {
+            overflow-y: scroll;
+            max-height: 12em;
+        }
     }
 
-    /* .nav-options {
-        height: 2.5em;
-
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    .nav-options button {
-        width: fit-content;
+    .nav-filter li ul li {
         height: 100%;
 
         display: flex;
-        justify-content: end;
+        justify-content: space-between;
         align-items: center;
 
-        margin-right: 1em;
-        padding: 0 1em;
+        font-size: .8em;
+        color: var(--color-3);
 
-        border: none;
-        border-radius: 6em;
-
-        background-color: var(--color-3);
-        opacity: .4;
-
-        color: var(--color-1)
+        cursor: pointer;
     }
 
-    .nav-options button:nth-of-type(3) {
-        background-color: var(--color-7);
-    }
-
-    .nav-options button div {
+    .nav-filter li ul li div {
         aspect-ratio: 1/1;
-        height: 100%;
+        height: 1.25em;
 
         display: flex;
-        justify-content: start;
+        justify-content: center;
         align-items: center;
+
+        border: solid .08em var(--color-4);
+        border-radius: .3em;
     }
 
-    .nav-options button div img {
-        width: 40%;
-    } */
+    .nav-filter li ul li div img {
+        width: 50%;
+    }
 
     /* **** */
     /* TOL */
@@ -959,7 +1089,7 @@
 
         position: relative;
 
-        border: solid .02em var(--color-3);
+        border: solid .02em var(--color-9);
         border-radius: .4em;
 
         background-color: var(--color-2);
@@ -987,7 +1117,6 @@
         justify-content: center;
         align-items: center;
 
-        border: none;
         border-radius: 100%;
 
         background-color: var(--color-3);
@@ -999,9 +1128,17 @@
 
     .popup-content-header > div button:nth-of-type(1) {
         margin-right: 1em;
+
+        border: solid .08em var(--color-4);
+    }
+
+    .popup-content-header > div button:nth-of-type(1):hover {
+        background-color: var(--color-4)
     }
 
     .popup-content-header > button {
+        border: solid .08em var(--color-8);
+
         background-color: var(--color-7);
     }
 
@@ -1010,7 +1147,7 @@
     }
 
     .popup-content-header button:hover {
-        background-color: var(--color-4);
+        background-color: var(--color-8);
     }
 
     .popup-content-main {
