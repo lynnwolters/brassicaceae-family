@@ -172,7 +172,7 @@
 
     let isZoomed = false;
     function updateBackground() {
-        const section = document.querySelector("main > section");
+        const section = document.querySelector("#tree-of-life");
         if (section) {
             section.style.backgroundImage = isZoomed ? "none" : 'url("images/colors.svg")';
         }
@@ -1557,15 +1557,16 @@
     main > section {
         aspect-ratio: 1/1;
         height: 100%;
+    }
+
+    #tree-of-life {
+        rotate: 90deg;
+        z-index: 1;
 
         background-image: url("images/colors.svg");
         background-repeat: no-repeat;
         background-position: center;
-        background-size: 105%;
-    }
-
-    #tree-of-life {
-        z-index: 1;
+        background-size: 110%;
 
         cursor: pointer;
     }
