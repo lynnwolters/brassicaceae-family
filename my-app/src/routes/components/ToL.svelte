@@ -929,6 +929,7 @@
         padding: 2.5em;
 
         border: solid .02em var(--color-9);
+        border-radius: .4em;
 
         background-color: var(--color-2);
     }
