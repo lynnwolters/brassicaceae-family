@@ -423,6 +423,29 @@
     };
 </script>
 
+<div class="legenda">
+    <button>
+        <p>Hesperodae</p>
+        <div></div>
+    </button>
+    <button>
+        <p>Arabodae</p>
+        <div></div>
+    </button>
+    <button>
+        <p>Camelinodae</p>
+        <div></div>
+    </button>
+    <button>
+        <p>Heliophilodae</p>
+        <div></div>
+    </button>
+    <button>
+        <p>Brassicodae</p>
+        <div></div>
+    </button>
+</div>
+
 <nav>
     <div class="scroll-container">
         <a class="nav-logo" href="#">
@@ -965,6 +988,72 @@
         height: 100%;
     }
 
+    .legenda {
+        width: 8em;
+
+        position: absolute;
+        top: 2.5em;
+        right: 2.5em;
+        z-index: 1000;
+
+        display: flex;
+        flex-direction: column;
+    }
+
+    .legenda button p {
+        color: var(--color-3);
+    }
+
+    .legenda button {
+        width: 100%;
+        height: 2em;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        margin-bottom: .4em;
+
+        border: none;
+
+        background-color: transparent;
+    }
+
+    .legenda button div {
+        aspect-ratio: 1/1;
+        height: 100%;
+
+        border-radius: 6em;
+
+        margin-left: 1em;
+    }
+
+    .legenda button:nth-of-type(1) div {
+        border: solid .08em #FF8A00;
+
+        background-color: rgba(255, 138, 0, .4);
+    }
+    .legenda button:nth-of-type(2) div {
+        border: solid .08em #DBFF00;
+
+        background-color: rgba(219, 255, 0, .4);
+    }
+    .legenda button:nth-of-type(3) div {
+        border: solid .08em #00FF0A;
+
+        background-color: rgba(0, 255, 10, .4);
+    }
+    .legenda button:nth-of-type(4) div {
+        border: solid .08em #0075FF;
+        
+        background-color: rgba(0, 117, 255, .4);
+    }
+    .legenda button:nth-of-type(5) div {
+        border: solid .08em #8F00FF;
+
+        background-color: rgba(143, 0, 255, .4);
+    }
+
     /* **** */
     /* NAV */
     /* ** */
@@ -1477,8 +1566,6 @@
 
     #tree-of-life {
         z-index: 1;
-
-        transform: rotate(88deg);
 
         cursor: pointer;
     }
