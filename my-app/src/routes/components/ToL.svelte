@@ -125,6 +125,14 @@
         selectPopup = null
     };
 
+    let selectPopupTwo = false;
+    const showPopupTwo = () => {
+        selectPopupTwo = true
+    };
+    const hidePopupTwo = () => {
+        selectPopupTwo = false
+    };
+
     // ********************************** //
 
     // ****************** //
@@ -148,7 +156,7 @@
     // **************** //
 
     function openCladogram() {
-        var cladogramContainer = document.getElementById("cladogramContainer");
+        var cladogramContainer = document.getElementById("cladogram-container");
         if (cladogramContainer.style.display === "none") {
             cladogramContainer.style.display = "block";
         } else {
@@ -464,7 +472,7 @@
                         <p>Reset</p>
                     </button>
                 </div>
-            <div id="cladogramContainer" style="display: none;">
+            <div id="cladogram-container" style="display: none;" on:click={showPopupTwo}>
                 <img src="images/cladogram.svg" alt="cladogram">
             </div>
             {/if}
@@ -854,6 +862,18 @@
             </div>
         </div>
     {/if}
+    {#if selectPopupTwo}
+        <div class="popup-two">
+            <div class="popup-two-container">
+                <button on:click={hidePopupTwo}>
+                    <img src="images/close.svg" alt="close">
+                </button>
+                <div>
+                    <img src="images/cladogram.svg" alt="cladogram">
+                </div>
+            </div>
+        </div>
+    {/if}
 </main>
 
 <footer>
@@ -880,6 +900,68 @@
     #visualiseButton:disabled, #resetButton:disabled {
         opacity: 0.4;
         cursor: not-allowed; 
+    }
+
+    .popup-two {
+        width: 100vw;
+        height: 100vh;
+
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1001;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    .popup-two-container {
+        width: 50%;
+        height: fit-content;
+
+        position: relative;
+
+        padding: 2.5em;
+
+        border: solid .02em var(--color-9);
+
+        background-color: var(--color-2);
+    }
+
+    .popup-two-container button {
+        aspect-ratio: 1/1;
+        height: 2.5em;
+
+        position: absolute;
+        top: 2.5em;
+        right: 2.5em;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background-color: var(--color-3);
+
+        border: none;
+        border-radius: .4em;
+    }
+
+    .popup-two-container button img {
+        width: 50%;
+    }
+
+    .popup-two-container button:hover {
+        background-color: var(--color-4);
+    }
+
+    .popup-two-container div img {
+        width: 100%;
+        height: 100%;
     }
 
     /* **** */
