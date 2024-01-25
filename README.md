@@ -6,31 +6,31 @@ An interactive visualization of Kasper Hendriks's study about the brassicaceae f
 
 ## How to install this application?
 
-1. Voer het volgende in je terminal in:
+1. Run the following command line in your terminal:
 
 ```js
 git clone https://github.com/lynnwolters/tech-track-23-24.git
 ```
 
-2. Om de applicatie op de juiste manier te laten draaien heb je Node.js nodig. Heb je dit nog niet geïnstalleerd, dan doe je dat door de volgende command line in te voeren in je terminal: 
+2. You will need Node.js and NPM to open this application. You can install these by running the following command lines in your terminal: 
 
 ```js
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 ```
 
-3. Met deze command line kan je kijken of Node.js succesvol geïnstalleerd is:
+3. You can check if Node.js / NPM installed correctly by the following command:
 
 ```js
 node -v 
 ```
 
-4. Open nu de map in je code editor en installeer de NPM packages:
+4. Open the folder in your code editor and install the NPM packages the project is using:
 
 ```js
 npm install
 ```
 
-5. Je kan nu de applicatie openen met:
+5. You can now open the application with:
 
 ```js
 npm run dev
@@ -38,6 +38,7 @@ npm run dev
 
 ## Build with:
 
+* Node.js / NPM
 * Svelte.kit
 * D3
 * JavaScript
