@@ -1560,7 +1560,7 @@
     }
 
     #tree-of-life {
-        rotate: 90deg;
+        /* rotate: 90deg; */
         z-index: 1;
 
         background-image: url("images/colors.svg");
